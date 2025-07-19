@@ -1,5 +1,0 @@
-# Python Password Manager
-
-## Checklist
-
-* 
