@@ -3,11 +3,19 @@ import questionary
 
 import json
 
+quit = False
+
 # helper function to make json.dumps() faster
 def ToJson(dictionary) :
     return json.dumps(dictionary, indent = 4)
 
 def Add() :
+    try:
+        with open("passwords.json", "r") as file :
+            accounts = json.load(file)
+    except :
+        accounts = []
+
     account = {}
 
     account['website'] = input("Enter website:    ")
@@ -17,23 +25,28 @@ def Add() :
     # with json.dumps() you can structure dictionary data nicely
     print(f"You entered:\n{ToJson(account)}")
 
+    accounts.append(account)
+
     with open("passwords.json", "w") as file :
         # used indent = 4 for better json readability
-        json.dump(account, file, indent = 4)
+        json.dump(accounts, file, indent = 4)
 
 def Show() :
     with open("passwords.json", "r") as file :
-        account = json.load(file)
+        accounts = json.load(file)
     
-    print(f"Your account:\n{ToJson(account)}")
+    print(f"Your accounts:\n{ToJson(accounts)}")
 
 # the choices to show in the menu
 menuChoices = [
     "Show Passwords",
-    "Add Password"
+    "Add Password",
+    "Quit"
 ]
 
-def Menu() :
+def Main() :
+    global quit
+
     # this function shows all choices and returns the selected one
     menuChoice = questionary.select(
         "Select an option:", choices = menuChoices
@@ -45,7 +58,10 @@ def Menu() :
     if (choiceIndex == 0) :
         print("Loading passwords...")
         Show()
-    else :
+    elif (choiceIndex == 1) :
         Add()
+    else :
+        quit = True
 
-Menu()
+while not quit :
+    Main()
