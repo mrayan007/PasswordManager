@@ -18,9 +18,9 @@ def Add() :
 
     account = {}
 
-    account['website'] = input("Enter website:    ")
-    account['username'] = input("Enter username:  ")
-    account['password'] = input("Enter password:  ")
+    account['website']  = input("Enter website:     ")
+    account['username'] = input("Enter username:    ")
+    account['password'] = input("Enter password:    ")
 
     # with json.dumps() you can structure dictionary data nicely
     print(f"You entered:\n{ToJson(account)}")
@@ -30,6 +30,8 @@ def Add() :
     with open("passwords.json", "w") as file :
         # used indent = 4 for better json readability
         json.dump(accounts, file, indent = 4)
+
+    print("Account added successfully!")
 
 def Show() :
     with open("passwords.json", "r") as file :
