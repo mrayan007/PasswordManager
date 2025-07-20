@@ -1,7 +1,5 @@
-## Password Manager
+## Password Manager CLI Version
 
-This is a simple local **password manager** that I gradually improve in order to master *Python*.
+This is a simple local **password manager** that I gradually improve in order to master *Python*, you can download it by clicking on the attached executable.
 
-Here are the [required libraries](requirements.txt).
-
-The app is also accompanied by a [secret key generator](key-generator.py) (run once).
+The app is also accompanied by a [secret key generator](key-generator.py).

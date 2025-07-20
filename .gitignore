@@ -1,3 +1,5 @@
 accounts.json
 venv/
 secret.key
+build/
+dist/
