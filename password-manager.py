@@ -1,14 +1,41 @@
+# libraries
+
+# cryptography is a library that allows string encryption and decryption (needed when storing passwords)
+from cryptography.fernet import Fernet
+
 # questionary is a library that allows me to create a cli with highlighted and selectable choices
 import questionary
 
+# allows writing files in json
 import json
 
 # getpass is a library that allows passwords to be hidden during input
 from getpass import getpass
 
+# utilities
+
 # helper function to make json.dumps() faster
 def ToJson(dictionary) :
     return json.dumps(dictionary, indent = 4)
+
+# method to load the fernet secret key from the secret.key file
+def LoadKey() :
+    with open('secret.key', 'rb') as file :
+        return file.read()
+
+# method to encrypt passwords
+def Encrypt(password) -> str :
+    key = LoadKey()
+    f = Fernet(key)
+
+    return f.encrypt(password.encode()).decode()
+
+# method to decrypt stored passwords
+def Decrypt(password) -> str :
+    key = LoadKey()
+    f = Fernet(key)
+
+    return f.decrypt(password.encode()).decode()
 
 def Add() :
     try:
@@ -19,9 +46,18 @@ def Add() :
 
     account = {}
 
-    account['website']  = input("Enter website:     ")
-    account['username'] = input("Enter username:    ")
-    account['password'] = getpass("Enter password:    ")
+    account['website']  = input("Enter website:        ")
+    account['username'] = input("Enter username:       ")
+    password            = getpass("Enter password:     ")
+    confirmPass         = getpass("Confirm your password:")
+
+    while password != confirmPass :
+        print("\nYour passwords don't match, try again!\n")
+
+        password = getpass("Enter password:        ")
+        confirmPass = getpass("Confirm your password:")
+
+    account["password"] = Encrypt(password)
 
     # with json.dumps() you can structure dictionary data nicely
     print(f"\nYou entered:\n{ToJson(account)}\n")
@@ -40,7 +76,7 @@ def Show() :
         with open("accounts.json", "r") as file :
             accounts = json.load(file)
     except :
-        print("You have no accounts saved yet.")
+        print("\nYou have no accounts saved yet.\n")
         return
     
     websiteMenu = []
@@ -70,7 +106,7 @@ def Show() :
             password = account["password"]
             break
     
-    print(f"\nThe password for {user} is: {password}\n")
+    print(f"\nThe password for {user} is: {Decrypt(password)}\n")
 
 # function to delete accounts
 def Delete() :
@@ -78,7 +114,7 @@ def Delete() :
         with open("accounts.json", "r") as file :
             accounts = json.load(file)
     except : 
-        print("You have no accounts to delete.")
+        print("\nYou have no accounts to delete.\n")
         return
     
     deleteMenu = [
@@ -91,7 +127,7 @@ def Delete() :
 
     if option == "Delete All" :
         newAccounts = []
-        print("Accounts deleted successfully!")
+        print("\nAccounts deleted successfully!\n")
     elif option == "Delete an Account" :
         websiteMenu = []
 
@@ -120,14 +156,10 @@ def Delete() :
         
             newAccounts.append(account)
 
-    else :
-        Start()
+        print("\nAccount deleted successfully!\n")
 
     with open("accounts.json", "w") as file :
         json.dump(newAccounts, file)
-    
-    Start()
-                
 
 # function to make a menu
 def Menu(message, menu) :
@@ -138,27 +170,29 @@ def Menu(message, menu) :
 def Start() :
     print("\nWelcome to your local safe!\n")
 
-    # the choices to show in the menu
-    menuChoices = [
-        "Show Accounts",
-        "Add Account",
-        "Delete Account",
-        "Quit"
-    ]
+    while True :
+        # the choices to show in the menu
+        menuChoices = [
+            "Show Accounts",
+            "Add Account",
+            "Delete Account",
+            "Quit"
+        ]
 
-    menuChoice = Menu("Select an option:", menuChoices)
+        menuChoice = Menu("Select an option:", menuChoices)
 
-    # map index of menu choice to variable to make if statement later shorter
-    choiceIndex = menuChoices.index(menuChoice)
+        # map index of menu choice to variable to make if statement later shorter
+        choiceIndex = menuChoices.index(menuChoice)
 
-    if (choiceIndex == 0) :
-        print("\nLoading accounts...\n")
-        Show()
-    elif (choiceIndex == 1) :
-        Add()
-    elif choiceIndex == 2 :
-        Delete()
-    else :
-        print("\nLogging out...\n")
+        if (choiceIndex == 0) :
+            print("\nLoading accounts...\n")
+            Show()
+        elif (choiceIndex == 1) :
+            Add()
+        elif choiceIndex == 2 :
+            Delete()
+        else :
+            print("\nLogging out...\n")
+            break
 
 Start()
