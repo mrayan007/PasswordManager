@@ -36,6 +36,7 @@ def Add() :
 
     print("\nAccount added successfully!\n")
 
+# function to show usernames and passwords
 def Show() :
     try :
         with open("accounts.json", "r") as file :
@@ -43,12 +44,37 @@ def Show() :
     except :
         accounts = [{"Error": "No accounts saved yet."}]
     
-    print(f"\nYour accounts:\n{ToJson(accounts)}\n")
+    websiteMenu = []
+
+    for account in accounts :
+        # to avoid duplication of the same website in menu
+        if account["website"] in websiteMenu :
+            continue
+
+        websiteMenu.append(account["website"])
+    
+    chosenWebsite = Menu("\nSelect a website: \n", websiteMenu)
+
+    websiteAccounts = []
+
+    for account in accounts :
+        if account["website"] == chosenWebsite :
+            websiteAccounts.append(account)
+
+    chosenUser = Menu("\nSelect a username:\n", websiteAccounts)
+
+    for account in websiteAccounts :
+        if account["username"] == chosenUser :
+            user = account["username"]
+            password = account["password"]
+            break
+    
+    print(f"\nThe password for {user} is: {password}\n")
 
 # function to make a menu
-def Menu(message, choices) :
+def Menu(message, menu) :
     return questionary.select(
-        message, choices = choices
+        message, choices = menu
         ).ask()
 
 def Main() :
