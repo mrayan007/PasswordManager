@@ -29,6 +29,8 @@ def LoadKey() :
         with open ('secret.key', 'wb') as file :
             file.write(key)
 
+        return key
+
 # method to encrypt passwords
 def Encrypt(password) -> str :
     key = LoadKey()
@@ -183,8 +185,6 @@ def Delete() :
 
 # function to start app
 def Start() :
-    print("\nWelcome to your local safe!\n")
-
     while True :
         # the choices to show in the menu
         menuChoices = [
@@ -211,4 +211,5 @@ def Start() :
             break
 
 # running app
+print("\nWelcome to your local safe!\n")
 Start()
