@@ -3,6 +3,9 @@ import questionary
 
 import json
 
+# getpass is a library that allows passwords to be hidden during input
+from getpass import getpass
+
 quit = False
 
 # helper function to make json.dumps() faster
@@ -11,7 +14,7 @@ def ToJson(dictionary) :
 
 def Add() :
     try:
-        with open("passwords.json", "r") as file :
+        with open("accounts.json", "r") as file :
             accounts = json.load(file)
     except :
         accounts = []
@@ -20,50 +23,60 @@ def Add() :
 
     account['website']  = input("Enter website:     ")
     account['username'] = input("Enter username:    ")
-    account['password'] = input("Enter password:    ")
+    account['password'] = getpass("Enter password:    ")
 
     # with json.dumps() you can structure dictionary data nicely
-    print(f"You entered:\n{ToJson(account)}")
+    print(f"\nYou entered:\n{ToJson(account)}\n")
 
     accounts.append(account)
 
-    with open("passwords.json", "w") as file :
+    with open("accounts.json", "w") as file :
         # used indent = 4 for better json readability
         json.dump(accounts, file, indent = 4)
 
-    print("Account added successfully!")
+    print("\nAccount added successfully!\n")
 
 def Show() :
-    with open("passwords.json", "r") as file :
-        accounts = json.load(file)
+    try :
+        with open("accounts.json", "r") as file :
+            accounts = json.load(file)
+    except :
+        accounts = [{"Error": "No accounts saved yet."}]
     
-    print(f"Your accounts:\n{ToJson(accounts)}")
+    print(f"\nYour accounts:\n{ToJson(accounts)}\n")
 
-# the choices to show in the menu
-menuChoices = [
-    "Show Passwords",
-    "Add Password",
-    "Quit"
-]
+# function to make a menu
+def Menu(message, choices) :
+    return questionary.select(
+        message, choices = choices
+        ).ask()
 
 def Main() :
     global quit
 
-    # this function shows all choices and returns the selected one
-    menuChoice = questionary.select(
-        "Select an option:", choices = menuChoices
-    ).ask()
+    print("\nWelcome to your local safe!\n")
+
+    # the choices to show in the menu
+    menuChoices = [
+        "Show Passwords",
+        "Add Password",
+        "Quit"
+    ]
+
+    menuChoice = Menu("Select an option:", menuChoices)
 
     # map index of menu choice to variable to make if statement later shorter
     choiceIndex = menuChoices.index(menuChoice)
 
     if (choiceIndex == 0) :
-        print("Loading passwords...")
+        print("\nLoading accounts...\n")
         Show()
     elif (choiceIndex == 1) :
         Add()
     else :
+        print("\nLogging out...\n")
         quit = True
 
-while not quit :
-    Main()
+class Program :
+    while not quit :
+        Main()
