@@ -6,8 +6,6 @@ import json
 # getpass is a library that allows passwords to be hidden during input
 from getpass import getpass
 
-quit = False
-
 # helper function to make json.dumps() faster
 def ToJson(dictionary) :
     return json.dumps(dictionary, indent = 4)
@@ -42,7 +40,8 @@ def Show() :
         with open("accounts.json", "r") as file :
             accounts = json.load(file)
     except :
-        accounts = [{"Error": "No accounts saved yet."}]
+        print("You have no accounts saved yet.")
+        return
     
     websiteMenu = []
 
@@ -56,12 +55,14 @@ def Show() :
     chosenWebsite = Menu("\nSelect a website: \n", websiteMenu)
 
     websiteAccounts = []
+    usernameMenu = []
 
     for account in accounts :
         if account["website"] == chosenWebsite :
             websiteAccounts.append(account)
+            usernameMenu.append(account["username"])
 
-    chosenUser = Menu("\nSelect a username:\n", websiteAccounts)
+    chosenUser = Menu("\nSelect a username:\n", usernameMenu)
 
     for account in websiteAccounts :
         if account["username"] == chosenUser :
@@ -71,21 +72,77 @@ def Show() :
     
     print(f"\nThe password for {user} is: {password}\n")
 
+# function to delete accounts
+def Delete() :
+    try :
+        with open("accounts.json", "r") as file :
+            accounts = json.load(file)
+    except : 
+        print("You have no accounts to delete.")
+        return
+    
+    deleteMenu = [
+        "Delete All",
+        "Delete an Account",
+        "\nBack\n"
+    ]
+
+    option = Menu("\nChoose an option:\n", deleteMenu)
+
+    if option == "Delete All" :
+        newAccounts = []
+        print("Accounts deleted successfully!")
+    elif option == "Delete an Account" :
+        websiteMenu = []
+
+        for account in accounts :
+            # to avoid duplication of the same website in menu
+            if account["website"] in websiteMenu :
+                continue
+
+            websiteMenu.append(account["website"])
+        
+        chosenWebsite = Menu("\nSelect a website: \n", websiteMenu)
+
+        usernameMenu = []
+
+        for account in accounts :
+            if account["website"] == chosenWebsite :
+                usernameMenu.append(account["username"])
+
+        chosenUser = Menu("\nSelect a username:\n", usernameMenu)
+
+        newAccounts = []
+
+        for account in accounts :
+            if account["username"] == chosenUser :
+                continue
+        
+            newAccounts.append(account)
+
+    else :
+        Start()
+
+    with open("accounts.json", "w") as file :
+        json.dump(newAccounts, file)
+    
+    Start()
+                
+
 # function to make a menu
 def Menu(message, menu) :
     return questionary.select(
         message, choices = menu
         ).ask()
 
-def Main() :
-    global quit
-
+def Start() :
     print("\nWelcome to your local safe!\n")
 
     # the choices to show in the menu
     menuChoices = [
-        "Show Passwords",
-        "Add Password",
+        "Show Accounts",
+        "Add Account",
+        "Delete Account",
         "Quit"
     ]
 
@@ -99,10 +156,9 @@ def Main() :
         Show()
     elif (choiceIndex == 1) :
         Add()
+    elif choiceIndex == 2 :
+        Delete()
     else :
         print("\nLogging out...\n")
-        quit = True
 
-class Program :
-    while not quit :
-        Main()
+Start()
