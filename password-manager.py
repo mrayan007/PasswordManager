@@ -20,8 +20,14 @@ def ToJson(dictionary) :
 
 # method to load the fernet secret key from the secret.key file
 def LoadKey() :
-    with open('secret.key', 'rb') as file :
-        return file.read()
+    try :
+        with open('secret.key', 'rb') as file :
+            return file.read()
+    except :
+        key = Fernet.generate_key()
+
+        with open ('secret.key', 'wb') as file :
+            file.write(key)
 
 # method to encrypt passwords
 def Encrypt(password) -> str :
@@ -37,6 +43,15 @@ def Decrypt(password) -> str :
 
     return f.decrypt(password.encode()).decode()
 
+# function to make a menu
+def Menu(message, menu) :
+    return questionary.select(
+        message, choices = menu
+        ).ask()
+
+# main functions
+
+# method for adding a new account
 def Add() :
     try:
         with open("accounts.json", "r") as file :
@@ -113,6 +128,10 @@ def Delete() :
     try :
         with open("accounts.json", "r") as file :
             accounts = json.load(file)
+
+            if accounts == [] :
+                print("\nYou have no accounts to delete.\n")
+                return
     except : 
         print("\nYou have no accounts to delete.\n")
         return
@@ -132,7 +151,6 @@ def Delete() :
         websiteMenu = []
 
         for account in accounts :
-            # to avoid duplication of the same website in menu
             if account["website"] in websiteMenu :
                 continue
 
@@ -157,16 +175,13 @@ def Delete() :
             newAccounts.append(account)
 
         print("\nAccount deleted successfully!\n")
+    else :
+        return
 
     with open("accounts.json", "w") as file :
         json.dump(newAccounts, file)
 
-# function to make a menu
-def Menu(message, menu) :
-    return questionary.select(
-        message, choices = menu
-        ).ask()
-
+# function to start app
 def Start() :
     print("\nWelcome to your local safe!\n")
 
@@ -195,4 +210,5 @@ def Start() :
             print("\nLogging out...\n")
             break
 
+# running app
 Start()
