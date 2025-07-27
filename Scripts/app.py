@@ -1,4 +1,7 @@
+import json
 import utilities
+from getpass import getpass
+from pprint import pprint
 
 def ShowAccounts() :
     accounts = utilities.LoadAccounts()
@@ -34,3 +37,35 @@ def ShowAccounts() :
             break
     
     print(f"\nThe password for '{user}' is: {utilities.Decrypt(password)}")
+
+def AddAccount() :
+    accounts = utilities.LoadAccounts()
+
+    if accounts == 0:
+        accounts = []
+
+    account = {}
+
+    account['website']  = input  ("\nEnter website:")
+    account['username'] = input  ("\nEnter username:")
+    
+    while True:
+        password = getpass('\nEnter password:')
+        passwordConfirmation = getpass('\nConfirm password:')
+
+        if password == passwordConfirmation:
+            break
+
+        print('\nPasswords not matching, reconfirm.')
+
+    account["password"] = utilities.Encrypt(password)
+
+    print("\nYou entered:")
+    pprint(account)
+
+    accounts.append(account)
+
+    with open("../Secrets/accounts.json", "w") as file :
+        json.dump(accounts, file, indent = 4)
+
+    print("\nAccount added successfully!\n")

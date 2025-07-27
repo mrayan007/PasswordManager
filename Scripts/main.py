@@ -23,7 +23,7 @@ def MainMenu() :
             print("\nLoading accounts...")
             app.ShowAccounts()
         elif (choiceIndex == 1) :
-            Add()
+            app.AddAccount()
         elif choiceIndex == 2 :
             Delete()
         else :

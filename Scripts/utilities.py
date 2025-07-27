@@ -16,16 +16,22 @@ def LoadAccounts() :
     
 def LoadKey() :
     try :
-        with open('../secret.key', 'rb') as file :
+        with open('../Secrets/secret.key', 'rb') as file :
             return file.read()
     except :
         key = Fernet.generate_key()
 
-        with open ('../secret.key', 'wb') as file :
+        with open ('../Secrets/secret.key', 'wb') as file :
             file.write(key)
 
         return key
     
+def Encrypt(password) -> str :
+    key = LoadKey()
+    f = Fernet(key)
+
+    return f.encrypt(password.encode()).decode()
+
 def Decrypt(password) -> str :
     key = LoadKey()
     f = Fernet(key)

@@ -10,7 +10,7 @@ import questionary
 import json
 
 # getpass is a library that allows passwords to be hidden during input
-from getpass import getpass
+
 
 # utilities
 
@@ -22,11 +22,7 @@ def ToJson(dictionary) :
 
 
 # method to encrypt passwords
-def Encrypt(password) -> str :
-    key = LoadKey()
-    f = Fernet(key)
 
-    return f.encrypt(password.encode()).decode()
 
 # method to decrypt stored passwords
 
