@@ -1,7 +1,7 @@
 # libraries
 
 # cryptography is a library that allows string encryption and decryption (needed when storing passwords)
-from cryptography.fernet import Fernet
+
 
 # questionary is a library that allows me to create a cli with highlighted and selectable choices
 import questionary
@@ -19,17 +19,7 @@ def ToJson(dictionary) :
     return json.dumps(dictionary, indent = 4)
 
 # method to load the fernet secret key from the secret.key file
-def LoadKey() :
-    try :
-        with open('secret.key', 'rb') as file :
-            return file.read()
-    except :
-        key = Fernet.generate_key()
 
-        with open ('secret.key', 'wb') as file :
-            file.write(key)
-
-        return key
 
 # method to encrypt passwords
 def Encrypt(password) -> str :
@@ -39,17 +29,10 @@ def Encrypt(password) -> str :
     return f.encrypt(password.encode()).decode()
 
 # method to decrypt stored passwords
-def Decrypt(password) -> str :
-    key = LoadKey()
-    f = Fernet(key)
 
-    return f.decrypt(password.encode()).decode()
 
 # function to make a menu
-def Menu(message, menu) :
-    return questionary.select(
-        message, choices = menu
-        ).ask()
+
 
 # main functions
 
@@ -88,42 +71,7 @@ def Add() :
     print("\nAccount added successfully!\n")
 
 # function to show usernames and passwords
-def Show() :
-    try :
-        with open("accounts.json", "r") as file :
-            accounts = json.load(file)
-    except :
-        print("\nYou have no accounts saved yet.\n")
-        return
-    
-    websiteMenu = []
 
-    for account in accounts :
-        # to avoid duplication of the same website in menu
-        if account["website"] in websiteMenu :
-            continue
-
-        websiteMenu.append(account["website"])
-    
-    chosenWebsite = Menu("\nSelect a website: \n", websiteMenu)
-
-    websiteAccounts = []
-    usernameMenu = []
-
-    for account in accounts :
-        if account["website"] == chosenWebsite :
-            websiteAccounts.append(account)
-            usernameMenu.append(account["username"])
-
-    chosenUser = Menu("\nSelect a username:\n", usernameMenu)
-
-    for account in websiteAccounts :
-        if account["username"] == chosenUser :
-            user = account["username"]
-            password = account["password"]
-            break
-    
-    print(f"\nThe password for {user} is: {Decrypt(password)}\n")
 
 # function to delete accounts
 def Delete() :
@@ -196,43 +144,9 @@ def Delete() :
 #         return
 
 # function that executes main menu
-def Main() :
-    while True :
-        # main menu options
-        menuChoices = [
-            "Show Accounts",
-            "Add Account",
-            "Delete Account",
-            "Quit"
-        ]
 
-        menuChoice = Menu("Select an option:", menuChoices)
 
-        # map index of menu choice to variable to make if statement later shorter
-        choiceIndex = menuChoices.index(menuChoice)
 
-        if (choiceIndex == 0) :
-            print("\nLoading accounts...\n")
-            Show()
-        elif (choiceIndex == 1) :
-            Add()
-        elif choiceIndex == 2 :
-            Delete()
-        else :
-            print("\nLogging out...\n")
-            break
-
-def Master() :
-    try :
-        with open ('masterHash.key', 'rb') as file :
-            masterKeyHash = json.load(file)
-        
-        keyInput = input('\nEnter master key:\n')
-
-        while keyInput != masterKey :
-            keyInput = input('\nWrong! Try again:\n')
-    except :
-        print('\n')
 
 # running app
 print("\nWelcome to your local password safe!\n")

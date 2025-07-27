@@ -1,8 +1,34 @@
-import os
 import argon2
 from argon2.exceptions import VerifyMismatchError
+import utilities
+import app
 
 hasher = argon2.PasswordHasher() 
+
+def MainMenu() :
+    mainMenuOptions = [
+            "Show Accounts",
+            "Add Account",
+            "Delete Account",
+            "Update Account",
+            "Quit"
+            ]
+
+    while True :
+        userMainMenuChoice = utilities.Menu("\nSelect an option:", mainMenuOptions)
+
+        choiceIndex = mainMenuOptions.index(userMainMenuChoice)
+
+        if (choiceIndex == 0) :
+            print("\nLoading accounts...")
+            app.ShowAccounts()
+        elif (choiceIndex == 1) :
+            Add()
+        elif choiceIndex == 2 :
+            Delete()
+        else :
+            print("\nLogging out...\n")
+            break
 
 def Main():
     print('\nWelcome to your safehouse!')
@@ -34,5 +60,7 @@ def Main():
 
         with open('../Secrets/master.key', 'w') as file:
             file.write(hasher.hash(masterKey))
+
+    MainMenu()
 
 Main()
