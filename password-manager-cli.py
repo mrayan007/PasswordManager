@@ -183,10 +183,22 @@ def Delete() :
     with open("accounts.json", "w") as file :
         json.dump(newAccounts, file)
 
-# function to start app
-def Start() :
+# function to update account info
+# def Update() :
+#     try :
+#         with open ('accounts.json', 'r') as file :
+#             accounts = json.load(file)
+#             if accounts == [] :
+#                 print("\nYou have no accounts to update.\n")
+#                 return
+#     except :
+#         print('\nNo accounts found to be updated.\n')
+#         return
+
+# function that executes main menu
+def Main() :
     while True :
-        # the choices to show in the menu
+        # main menu options
         menuChoices = [
             "Show Accounts",
             "Add Account",
@@ -210,6 +222,18 @@ def Start() :
             print("\nLogging out...\n")
             break
 
+def Master() :
+    try :
+        with open ('masterHash.key', 'rb') as file :
+            masterKeyHash = json.load(file)
+        
+        keyInput = input('\nEnter master key:\n')
+
+        while keyInput != masterKey :
+            keyInput = input('\nWrong! Try again:\n')
+    except :
+        print('\n')
+
 # running app
-print("\nWelcome to your local safe!\n")
-Start()
+print("\nWelcome to your local password safe!\n")
+Main()
