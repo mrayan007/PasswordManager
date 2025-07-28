@@ -104,3 +104,49 @@ def DeleteAccount() :
         json.dump(accountsAfterDeletion, file)
 
     print('\nAccount deleted successfully')
+
+def UpdatePassword():
+    accounts = utilities.LoadAccounts()
+
+    if accounts == 0:
+        print('\nYou have no accounts to update!')
+        return
+    
+    websitesMenu = []
+
+    for account in accounts:
+        websitesMenu.append(account['website'])
+
+    websitesMenuChoice = utilities.Menu('\nSelect a website:', websitesMenu)
+
+    usernamesMenu = []
+    accountsFiltered = []
+
+    for account in accounts:
+        if account['website'] == websitesMenuChoice:
+            usernamesMenu.append(account['username'])
+            accountsFiltered.append(account)
+
+    usernameChoice = utilities.Menu('\nSelect an account to update:', usernamesMenu)
+
+    for account in accountsFiltered:
+        if account['username'] == usernameChoice:
+            accountToUpdate = account
+            break
+
+    updatedPassword = getpass('\nEnter your new password:')
+
+    accountToUpdate['password'] = utilities.Encrypt(updatedPassword)
+
+    accountsAfterUpdate = []
+
+    for account in accounts:
+        if account['username'] == accountToUpdate['username']:
+            accountsAfterUpdate.append(accountToUpdate)
+
+        accountsAfterUpdate.append(account)
+
+    with open('../Secrets/accounts.json', 'w') as file:
+        json.dump(accountsAfterUpdate, file)
+
+    print('\nAccount Updated!')

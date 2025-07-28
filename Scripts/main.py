@@ -10,7 +10,7 @@ def MainMenu() :
             "Show Accounts",
             "Add Account",
             "Delete Account",
-            "Update Account",
+            "Update Password",
             "Quit"
             ]
 
@@ -26,6 +26,8 @@ def MainMenu() :
             app.AddAccount()
         elif choiceIndex == 2 :
             app.DeleteAccount()
+        elif choiceIndex == 3:
+            app.UpdatePassword()
         else :
             print("\nLogging out...\n")
             break
