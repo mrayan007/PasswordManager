@@ -25,7 +25,7 @@ def MainMenu() :
         elif (choiceIndex == 1) :
             app.AddAccount()
         elif choiceIndex == 2 :
-            Delete()
+            app.DeleteAccount()
         else :
             print("\nLogging out...\n")
             break

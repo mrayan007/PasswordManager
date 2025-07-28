@@ -69,3 +69,38 @@ def AddAccount() :
         json.dump(accounts, file, indent = 4)
 
     print("\nAccount added successfully!\n")
+
+def DeleteAccount() :
+    accounts = utilities.LoadAccounts()
+
+    if accounts == 0:
+        print('\nYou have no accounts to delete!')
+        return
+
+    websitesMenu = []
+
+    for account in accounts:
+        websitesMenu.append(account['website'])
+
+    websitesMenuChoice = utilities.Menu('\nSelect the website of your desired account:', websitesMenu)
+
+    usernamesMenu = []
+
+    for account in accounts:
+        if account['website'] == websitesMenuChoice:
+            usernamesMenu.append(account['username'])
+
+    usernameToDelete = utilities.Menu('\nSelect the account to delete:', usernamesMenu)
+
+    accountsAfterDeletion = []
+
+    for account in accounts:
+        if account['username'] == usernameToDelete:
+            continue
+
+        accountsAfterDeletion.append(account)
+
+    with open('../Secrets/accounts.json', 'w') as file:
+        json.dump(accountsAfterDeletion, file)
+
+    print('\nAccount deleted successfully')

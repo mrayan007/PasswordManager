@@ -10,8 +10,14 @@ def Menu(message, menu) :
 def LoadAccounts() :
     try :
         with open("../Secrets/accounts.json", "r") as file :
-            return json.load(file)
-    except :
+            content = json.load(file)
+
+        if content == []:
+            return 0
+
+        return content
+        
+    except FileNotFoundError:
         return 0
     
 def LoadKey() :
